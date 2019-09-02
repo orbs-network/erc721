@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/hex"
 	"github.com/orbs-network/orbs-contract-sdk/go/sdk/v1/address"
 	"github.com/orbs-network/orbs-contract-sdk/go/sdk/v1/state"
 	"strconv"
@@ -25,6 +26,23 @@ func getApproved(tokenId uint64) []byte {
 	return state.ReadBytes(_approvalKey(tokenId))
 }
 
+
+func setApprovalForAll(operator []byte, approved uint32) {
+	if len(operator) != 20 {
+		panic("approval not authorized")
+	}
+
+	if approved > 1 { // enforce boolean
+		panic("approval not authorized")
+	}
+
+	_setOperatorPrivileges(address.GetSignerAddress(), operator, approved)
+}
+
+func isApprovedForAll(owner []byte, operator []byte) uint32 {
+	return _getOperatorPrivileges(owner, operator)
+}
+
 func _approve(approvedAddress []byte, tokenId uint64) {
 	state.WriteBytes(_approvalKey(tokenId), approvedAddress)
 }
@@ -42,5 +60,17 @@ func _checkApproval(from []byte, tokenId uint64) {
 }
 
 func _approvalKey(tokenId uint64) []byte {
-	return []byte("approved_single." + strconv.FormatUint(tokenId, 10))
+	return []byte("approved." + strconv.FormatUint(tokenId, 10))
+}
+
+func _setOperatorPrivileges(owner []byte, operator []byte, value uint32)  {
+	state.WriteUint32(_operatorKey(owner, operator), value)
+}
+
+func _getOperatorPrivileges(owner []byte, operator []byte) uint32 {
+	return state.ReadUint32(_operatorKey(owner, operator))
+}
+
+func _operatorKey(owner []byte, operator []byte) []byte {
+	return []byte("operator."+hex.EncodeToString(owner)+"."+hex.EncodeToString(operator))
 }

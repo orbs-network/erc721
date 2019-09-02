@@ -81,6 +81,16 @@ func (h *harness) getApproved(t *testing.T, sender *orbs.OrbsAccount, tokenId ui
 	return queryResponse.OutputArguments[0].([]byte)
 }
 
+func (h *harness) isApprovedForAll(t *testing.T, sender *orbs.OrbsAccount, address []byte, operator []byte) uint32 {
+	query, err := h.client.CreateQuery(sender.PublicKey, h.contractName, "isApprovedForAll", address, operator)
+	require.NoError(t, err)
+
+	queryResponse, err := h.client.SendQuery(query)
+	require.NoError(t, err)
+
+	return queryResponse.OutputArguments[0].(uint32)
+}
+
 func (h *harness) mint(t *testing.T, sender *orbs.OrbsAccount, jsonMetadata string) uint64 {
 	tx, _, err := h.client.CreateTransaction(sender.PublicKey, sender.PrivateKey, h.contractName, "mint", jsonMetadata)
 	require.NoError(t, err)
@@ -107,6 +117,20 @@ func (h *harness) safeTransferFrom(t *testing.T, sender *orbs.OrbsAccount, from 
 
 func (h *harness) approve(t *testing.T, sender *orbs.OrbsAccount, address []byte, tokenId uint64) error {
 	tx, _, err := h.client.CreateTransaction(sender.PublicKey, sender.PrivateKey, h.contractName, "approve", address, tokenId)
+	require.NoError(t, err)
+
+	response, err := h.client.SendTransaction(tx)
+	require.NoError(t, err)
+
+	if response.ExecutionResult != codec.EXECUTION_RESULT_SUCCESS {
+		return fmt.Errorf(response.OutputArguments[0].(string))
+	}
+
+	return nil
+}
+
+func (h *harness) setApprovalForAll(t *testing.T, sender *orbs.OrbsAccount, operator []byte, approved uint32) error {
+	tx, _, err := h.client.CreateTransaction(sender.PublicKey, sender.PrivateKey, h.contractName, "setApprovalForAll", operator, approved)
 	require.NoError(t, err)
 
 	response, err := h.client.SendTransaction(tx)

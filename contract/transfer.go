@@ -1,8 +1,11 @@
 package main
 
-import (
-	"bytes"
-)
+import "bytes"
+
+func transferFrom(from []byte, to []byte, tokenId uint64) {
+	// FIXME implement
+	panic("not implemented")
+}
 
 func safeTransferFrom(from []byte, to []byte, tokenId uint64) {
 	_checkTransferRights(from, to, tokenId)
