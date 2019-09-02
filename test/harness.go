@@ -71,7 +71,6 @@ func (h *harness) tokenMetadata(t *testing.T, sender *orbs.OrbsAccount, tokenId 
 	return queryResponse.OutputArguments[0].(string)
 }
 
-
 func (h *harness) mint(t *testing.T, sender *orbs.OrbsAccount, jsonMetadata string) uint64 {
 	tx, _, err := h.client.CreateTransaction(sender.PublicKey, sender.PrivateKey, h.contractName, "mint", jsonMetadata)
 	require.NoError(t, err)
@@ -82,3 +81,16 @@ func (h *harness) mint(t *testing.T, sender *orbs.OrbsAccount, jsonMetadata stri
 	return response.OutputArguments[0].(uint64)
 }
 
+func (h *harness) safeTransferFrom(t *testing.T, sender *orbs.OrbsAccount, from []byte, to []byte, tokenId uint64) error {
+	tx, _, err := h.client.CreateTransaction(sender.PublicKey, sender.PrivateKey, h.contractName, "safeTransferFrom", from, to, tokenId)
+	require.NoError(t, err)
+
+	response, err := h.client.SendTransaction(tx)
+	require.NoError(t, err)
+
+	if response.ExecutionResult != codec.EXECUTION_RESULT_SUCCESS {
+		return fmt.Errorf(response.OutputArguments[0].(string))
+	}
+
+	return nil
+}

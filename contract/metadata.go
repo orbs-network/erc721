@@ -34,6 +34,14 @@ func tokenMetadata(tokenId uint64) string {
 	return _getMetadata(tokenId)
 }
 
+func name() {
+	panic("not implemented")
+}
+
+func symbol() {
+	panic("not implemented")
+}
+
 func _setMetadata(tokenId uint64, metadata string) {
 	state.WriteString(_metadataKey(tokenId), metadata)
 }
