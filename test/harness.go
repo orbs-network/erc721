@@ -46,7 +46,7 @@ func (h *harness) balanceOf(t *testing.T, sender *orbs.OrbsAccount, address []by
 	require.NoError(t, err)
 
 	queryResponse, err := h.client.SendQuery(query)
-	require.NoError(t, err, queryResponse.OutputArguments[0])
+	require.NoError(t, err)
 
 	return queryResponse.OutputArguments[0].(uint64)
 }
@@ -56,7 +56,7 @@ func (h *harness) ownerOf(t *testing.T, sender *orbs.OrbsAccount, tokenId uint64
 	require.NoError(t, err)
 
 	queryResponse, err := h.client.SendQuery(query)
-	require.NoError(t, err, queryResponse.OutputArguments[0])
+	require.NoError(t, err)
 
 	return queryResponse.OutputArguments[0].([]byte)
 }
@@ -66,9 +66,19 @@ func (h *harness) tokenMetadata(t *testing.T, sender *orbs.OrbsAccount, tokenId 
 	require.NoError(t, err)
 
 	queryResponse, err := h.client.SendQuery(query)
-	require.NoError(t, err, queryResponse.OutputArguments[0])
+	require.NoError(t, err)
 
 	return queryResponse.OutputArguments[0].(string)
+}
+
+func (h *harness) getApproved(t *testing.T, sender *orbs.OrbsAccount, tokenId uint64) []byte {
+	query, err := h.client.CreateQuery(sender.PublicKey, h.contractName, "getApproved", tokenId)
+	require.NoError(t, err)
+
+	queryResponse, err := h.client.SendQuery(query)
+	require.NoError(t, err)
+
+	return queryResponse.OutputArguments[0].([]byte)
 }
 
 func (h *harness) mint(t *testing.T, sender *orbs.OrbsAccount, jsonMetadata string) uint64 {
@@ -76,7 +86,7 @@ func (h *harness) mint(t *testing.T, sender *orbs.OrbsAccount, jsonMetadata stri
 	require.NoError(t, err)
 
 	response, err := h.client.SendTransaction(tx)
-	require.NoError(t, err, response.OutputArguments[0])
+	require.NoError(t, err)
 
 	return response.OutputArguments[0].(uint64)
 }
@@ -93,4 +103,32 @@ func (h *harness) safeTransferFrom(t *testing.T, sender *orbs.OrbsAccount, from 
 	}
 
 	return nil
+}
+
+func (h *harness) approve(t *testing.T, sender *orbs.OrbsAccount, address []byte, tokenId uint64) error {
+	tx, _, err := h.client.CreateTransaction(sender.PublicKey, sender.PrivateKey, h.contractName, "approve", address, tokenId)
+	require.NoError(t, err)
+
+	response, err := h.client.SendTransaction(tx)
+	require.NoError(t, err)
+
+	if response.ExecutionResult != codec.EXECUTION_RESULT_SUCCESS {
+		return fmt.Errorf(response.OutputArguments[0].(string))
+	}
+
+	return nil
+}
+
+func paintBlackSquare(t *testing.T, h *harness, owner *orbs.OrbsAccount) uint64 {
+	balance := h.balanceOf(t, owner, owner.AddressAsBytes())
+	tokenId := h.mint(t, owner, `{"title":"Black Square","type":"Painting"}`)
+
+	metadata := h.tokenMetadata(t, owner, tokenId)
+	require.EqualValues(t, `{"title":"Black Square","type":"Painting"}`, metadata)
+	require.EqualValues(t, balance+1, h.balanceOf(t, owner, owner.AddressAsBytes()))
+
+	tokenOwner := h.ownerOf(t, owner, tokenId)
+	require.EqualValues(t, owner.AddressAsBytes(), tokenOwner)
+
+	return tokenId
 }
