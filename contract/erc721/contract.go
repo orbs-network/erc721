@@ -5,6 +5,7 @@ import (
 )
 
 var PUBLIC = sdk.Export(
+	name, symbol,
 	mint, tokenMetadata,
 	balanceOf, ownerOf,
 	transferFrom, safeTransferFrom,
