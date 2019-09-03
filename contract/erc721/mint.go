@@ -12,7 +12,7 @@ func mint(jsonMetadata string) uint64 {
 	tokenId := _getNextTokenID()
 
 	_setMetadata(tokenId, jsonMetadata)
-	_mint(address.GetSignerAddress(), tokenId)
+	_mint(address.GetCallerAddress(), tokenId)
 
 	_setNextTokenID(tokenId + 1)
 	return tokenId

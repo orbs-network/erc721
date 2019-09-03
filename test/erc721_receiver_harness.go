@@ -36,8 +36,8 @@ func (h *erc721ReceiverHarness) deployContract(t *testing.T, sender *orbs.OrbsAc
 	require.EqualValues(t, codec.EXECUTION_RESULT_SUCCESS, deployResponse.ExecutionResult)
 }
 
-func (h *erc721ReceiverHarness) receivedTokens(t *testing.T, sender *orbs.OrbsAccount, address []byte) uint64 {
-	query, err := h.client.CreateQuery(sender.PublicKey, h.contractName, "receivedTokens", address)
+func (h *erc721ReceiverHarness) receivedTokens(t *testing.T, sender *orbs.OrbsAccount) uint64 {
+	query, err := h.client.CreateQuery(sender.PublicKey, h.contractName, "receivedTokens")
 	require.NoError(t, err)
 
 	queryResponse, err := h.client.SendQuery(query)

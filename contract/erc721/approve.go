@@ -11,7 +11,7 @@ import (
 func approve(approvedAddress []byte, tokenId uint64) {
 	owner := ownerOf(tokenId)
 
-	if !bytes.Equal(owner, address.GetSignerAddress()) {
+	if !bytes.Equal(owner, address.GetCallerAddress()) {
 		panic("approval not authorized")
 	}
 
@@ -36,7 +36,7 @@ func setApprovalForAll(operator []byte, approved uint32) {
 		panic("approval not authorized")
 	}
 
-	_setOperatorPrivileges(address.GetSignerAddress(), operator, approved)
+	_setOperatorPrivileges(address.GetCallerAddress(), operator, approved)
 }
 
 func isApprovedForAll(owner []byte, operator []byte) uint32 {
@@ -53,9 +53,9 @@ func _revokeApproval(tokenId uint64) {
 
 func _checkApproval(from []byte, tokenId uint64) {
 	approvedAddress := getApproved(tokenId)
-	approvedByOperator := _getOperatorPrivileges(from, address.GetSignerAddress()) == 1
+	approvedByOperator := _getOperatorPrivileges(from, address.GetCallerAddress()) == 1
 
-	approved := bytes.Equal(from, address.GetSignerAddress()) || bytes.Equal(approvedAddress, address.GetSignerAddress()) || approvedByOperator;
+	approved := bytes.Equal(from, address.GetCallerAddress()) || bytes.Equal(approvedAddress, address.GetCallerAddress()) || approvedByOperator;
 	if  !approved {
 		panic("transfer not authorized")
 	}
