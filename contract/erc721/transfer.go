@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/hex"
 	"github.com/orbs-network/orbs-contract-sdk/go/sdk/v1/address"
+	"github.com/orbs-network/orbs-contract-sdk/go/sdk/v1/events"
 	"github.com/orbs-network/orbs-contract-sdk/go/sdk/v1/service"
 )
 
@@ -21,8 +22,10 @@ func safeTransferFrom(from []byte, to []byte, tokenId uint64, data []byte) {
 func _transfer(from []byte, to []byte, tokenId uint64) {
 	_decBalance(from)
 	_setOwner(tokenId, to)
-	_revokeApproval(tokenId)
+	_revokeApprovalBy(from, tokenId)
 	_incBalance(to)
+
+	events.EmitEvent(Transfer, from, to, tokenId)
 }
 
 func _checkTransferRights(from []byte, to []byte, tokenId uint64) {

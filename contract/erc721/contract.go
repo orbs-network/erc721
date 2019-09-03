@@ -13,6 +13,12 @@ var PUBLIC = sdk.Export(
 
 var SYSTEM = sdk.Export(_init)
 
+var EVENTS = sdk.Export(Transfer, Approval, ApprovalForAll)
+
 func _init() {
 	_setNextTokenID(0)
 }
+
+func Transfer(from []byte, to []byte, tokenId uint64) {}
+func Approval(owner []byte, address []byte, tokenId uint64) {}
+func ApprovalForAll(owner []byte, operator []byte, permissions uint32) {}
