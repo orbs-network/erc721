@@ -83,7 +83,16 @@ func TestERC721_transferFrom(t *testing.T) {
 	})
 
 	t.Run("from an universal approved address ", func(t *testing.T) {
-		// FIXME implement
+		approvedAll, _ := orbs.CreateAccount()
+		tokenId := paintBlackSquare(t, h, owner)
+
+		err := h.setApprovalForAll(t, owner, approvedAll.AddressAsBytes(), 1)
+		require.NoError(t, err)
+
+		err = h.transferFrom(t, approvedAll, owner.AddressAsBytes(), buyer.AddressAsBytes(), tokenId)
+		require.NoError(t, err)
+
+		require.EqualValues(t, buyer.AddressAsBytes(), h.ownerOf(t, owner, tokenId))
 	})
 }
 

@@ -53,8 +53,10 @@ func _revokeApproval(tokenId uint64) {
 
 func _checkApproval(from []byte, tokenId uint64) {
 	approvedAddress := getApproved(tokenId)
+	approvedByOperator := _getOperatorPrivileges(from, address.GetSignerAddress()) == 1
 
-	if approved := bytes.Equal(from, address.GetSignerAddress()) || bytes.Equal(approvedAddress, address.GetSignerAddress()); !approved {
+	approved := bytes.Equal(from, address.GetSignerAddress()) || bytes.Equal(approvedAddress, address.GetSignerAddress()) || approvedByOperator;
+	if  !approved {
 		panic("transfer not authorized")
 	}
 }
