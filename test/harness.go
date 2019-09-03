@@ -101,8 +101,8 @@ func (h *harness) mint(t *testing.T, sender *orbs.OrbsAccount, jsonMetadata stri
 	return response.OutputArguments[0].(uint64)
 }
 
-func (h *harness) safeTransferFrom(t *testing.T, sender *orbs.OrbsAccount, from []byte, to []byte, tokenId uint64) error {
-	tx, _, err := h.client.CreateTransaction(sender.PublicKey, sender.PrivateKey, h.contractName, "safeTransferFrom", from, to, tokenId)
+func (h *harness) transferFrom(t *testing.T, sender *orbs.OrbsAccount, from []byte, to []byte, tokenId uint64) error {
+	tx, _, err := h.client.CreateTransaction(sender.PublicKey, sender.PrivateKey, h.contractName, "transferFrom", from, to, tokenId)
 	require.NoError(t, err)
 
 	response, err := h.client.SendTransaction(tx)

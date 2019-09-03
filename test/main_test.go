@@ -25,7 +25,7 @@ func TestERC721_mint(t *testing.T) {
 	paintBlackSquare(t, h, owner)
 }
 
-func TestERC721_safeTransferFrom(t *testing.T) {
+func TestERC721_transferFrom(t *testing.T) {
 	owner, _ := orbs.CreateAccount()
 	buyer, _ := orbs.CreateAccount()
 
@@ -43,7 +43,7 @@ func TestERC721_safeTransferFrom(t *testing.T) {
 		tokenOwner := h.ownerOf(t, owner, tokenId)
 		require.EqualValues(t, owner.AddressAsBytes(), tokenOwner)
 
-		err := h.safeTransferFrom(t, owner, owner.AddressAsBytes(), buyer.AddressAsBytes(), tokenId)
+		err := h.transferFrom(t, owner, owner.AddressAsBytes(), buyer.AddressAsBytes(), tokenId)
 		require.NoError(t, err)
 
 		ownerBalance = h.balanceOf(t, owner, owner.AddressAsBytes())
@@ -60,12 +60,12 @@ func TestERC721_safeTransferFrom(t *testing.T) {
 		tokenOwner := h.ownerOf(t, owner, tokenId)
 		require.EqualValues(t, owner.AddressAsBytes(), tokenOwner)
 
-		err := h.safeTransferFrom(t, owner, owner.AddressAsBytes(), buyer.AddressAsBytes(), tokenId)
+		err := h.transferFrom(t, owner, owner.AddressAsBytes(), buyer.AddressAsBytes(), tokenId)
 		require.NoError(t, err)
 
 		require.EqualValues(t, buyer.AddressAsBytes(), h.ownerOf(t, owner, tokenId))
 
-		err = h.safeTransferFrom(t, owner, owner.AddressAsBytes(), buyer.AddressAsBytes(), tokenId)
+		err = h.transferFrom(t, owner, owner.AddressAsBytes(), buyer.AddressAsBytes(), tokenId)
 		require.EqualError(t, err, "transfer not authorized")
 	})
 
@@ -76,7 +76,7 @@ func TestERC721_safeTransferFrom(t *testing.T) {
 		err := h.approve(t, owner, approvedForSingleSale.AddressAsBytes(), tokenId)
 		require.NoError(t, err)
 
-		err = h.safeTransferFrom(t, approvedForSingleSale, owner.AddressAsBytes(), buyer.AddressAsBytes(), tokenId)
+		err = h.transferFrom(t, approvedForSingleSale, owner.AddressAsBytes(), buyer.AddressAsBytes(), tokenId)
 		require.NoError(t, err)
 
 		require.EqualValues(t, buyer.AddressAsBytes(), h.ownerOf(t, owner, tokenId))
@@ -87,7 +87,7 @@ func TestERC721_safeTransferFrom(t *testing.T) {
 	})
 }
 
-func TestERC721_safeTransferFromWrongAddress(t *testing.T) {
+func TestERC721_transferFromWrongAddress(t *testing.T) {
 	owner, _ := orbs.CreateAccount()
 	buyer, _ := orbs.CreateAccount()
 
@@ -113,21 +113,21 @@ func TestERC721_safeTransferFromWrongAddress(t *testing.T) {
 	checkIfNothingChanged()
 
 	t.Run("from wrong address", func(t *testing.T) {
-		err := h.safeTransferFrom(t, owner, []byte{1, 2, 3}, buyer.AddressAsBytes(), tokenId)
+		err := h.transferFrom(t, owner, []byte{1, 2, 3}, buyer.AddressAsBytes(), tokenId)
 		require.EqualError(t, err, "transfer not authorized")
 
 		checkIfNothingChanged()
 	})
 
 	t.Run("to malformed address", func(t *testing.T) {
-		err := h.safeTransferFrom(t, owner, owner.AddressAsBytes(), []byte{1, 2, 3}, tokenId)
+		err := h.transferFrom(t, owner, owner.AddressAsBytes(), []byte{1, 2, 3}, tokenId)
 		require.EqualError(t, err, "transfer not authorized")
 
 		checkIfNothingChanged()
 	})
 
 	t.Run("non-existent token", func(t *testing.T) {
-		err := h.safeTransferFrom(t, owner, owner.AddressAsBytes(), []byte{1, 2, 3}, 1974)
+		err := h.transferFrom(t, owner, owner.AddressAsBytes(), []byte{1, 2, 3}, 1974)
 		require.EqualError(t, err, "transfer not authorized")
 
 		checkIfNothingChanged()
@@ -158,7 +158,7 @@ func TestERC721_approve(t *testing.T) {
 		require.NoError(t, err)
 		require.EqualValues(t, approvedAddress.AddressAsBytes(), h.getApproved(t, owner, tokenId))
 
-		err = h.safeTransferFrom(t, owner, owner.AddressAsBytes(), buyer.AddressAsBytes(), tokenId)
+		err = h.transferFrom(t, owner, owner.AddressAsBytes(), buyer.AddressAsBytes(), tokenId)
 		require.NoError(t, err)
 
 		require.Empty(t, h.getApproved(t, owner, tokenId))
@@ -211,7 +211,7 @@ func TestERC721_setApprovalForAll(t *testing.T) {
 		require.EqualValues(t, 0, h.isApprovedForAll(t, owner, owner.AddressAsBytes(), approvedAddress.AddressAsBytes()))
 		require.EqualValues(t, 1, h.isApprovedForAll(t, owner, owner.AddressAsBytes(), anotherApprovedAddress.AddressAsBytes()))
 
-		err = h.safeTransferFrom(t, owner, approvedAddress.AddressAsBytes(), buyer.AddressAsBytes(), tokenId)
+		err = h.transferFrom(t, owner, approvedAddress.AddressAsBytes(), buyer.AddressAsBytes(), tokenId)
 		require.EqualError(t, err, "transfer not authorized")
 	})
 
@@ -226,7 +226,7 @@ func TestERC721_setApprovalForAll(t *testing.T) {
 		require.NoError(t, err)
 		require.EqualValues(t, 1, h.isApprovedForAll(t, owner, owner.AddressAsBytes(), approvedAddress.AddressAsBytes()))
 
-		err = h.safeTransferFrom(t, owner, owner.AddressAsBytes(), buyer.AddressAsBytes(), tokenId)
+		err = h.transferFrom(t, owner, owner.AddressAsBytes(), buyer.AddressAsBytes(), tokenId)
 		require.NoError(t, err)
 
 		require.EqualValues(t, 1, h.isApprovedForAll(t, owner, owner.AddressAsBytes(), approvedAddress.AddressAsBytes()))

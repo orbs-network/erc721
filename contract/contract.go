@@ -7,7 +7,7 @@ import (
 var PUBLIC = sdk.Export(
 	mint, tokenMetadata,
 	balanceOf, ownerOf,
-	safeTransferFrom,
+	transferFrom, safeTransferFrom,
 	approve, getApproved,
 	setApprovalForAll, isApprovedForAll)
 

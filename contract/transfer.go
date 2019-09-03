@@ -3,13 +3,13 @@ package main
 import "bytes"
 
 func transferFrom(from []byte, to []byte, tokenId uint64) {
-	// FIXME implement
-	panic("not implemented")
+	_checkTransferRights(from, to, tokenId)
+	_transfer(from, to, tokenId)
 }
 
 func safeTransferFrom(from []byte, to []byte, tokenId uint64) {
-	_checkTransferRights(from, to, tokenId)
-	_transfer(from, to, tokenId)
+	// FIXME implement
+	panic("not implemented")
 }
 
 func _transfer(from []byte, to []byte, tokenId uint64) {
