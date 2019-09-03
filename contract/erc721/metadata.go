@@ -1,9 +1,9 @@
 package main
 
-func name() {
-	panic("not implemented")
+func name() string {
+	return "ORBS721"
 }
 
-func symbol() {
-	panic("not implemented")
+func symbol() string {
+	return "0721"
 }
