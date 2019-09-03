@@ -115,8 +115,8 @@ func (h *erc721Harness) transferFrom(t *testing.T, sender *orbs.OrbsAccount, fro
 	return nil
 }
 
-func (h *erc721Harness) safeTransferFrom(t *testing.T, sender *orbs.OrbsAccount, from []byte, to []byte, tokenId uint64, data []byte) error {
-	tx, _, err := h.client.CreateTransaction(sender.PublicKey, sender.PrivateKey, h.contractName, "safeTransferFrom", from, to, tokenId, data)
+func (h *erc721Harness) safeTransferFrom(t *testing.T, sender *orbs.OrbsAccount, from []byte, to []byte, tokenId uint64, toContractName string, data []byte) error {
+	tx, _, err := h.client.CreateTransaction(sender.PublicKey, sender.PrivateKey, h.contractName, "safeTransferFrom", from, to, tokenId, toContractName, data)
 	require.NoError(t, err)
 
 	response, err := h.client.SendTransaction(tx)

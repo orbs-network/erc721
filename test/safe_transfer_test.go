@@ -30,7 +30,7 @@ func TestERC721_safeTransferFrom(t *testing.T) {
 		tokenOwner := h.ownerOf(t, owner, tokenId)
 		require.EqualValues(t, owner.AddressAsBytes(), tokenOwner)
 
-		err := h.safeTransferFrom(t, owner, owner.AddressAsBytes(), receiverContractNameAsBytes, tokenId, []byte(r.contractName))
+		err := h.safeTransferFrom(t, owner, owner.AddressAsBytes(), receiverContractNameAsBytes, tokenId, r.contractName, []byte(r.contractName))
 		require.NoError(t, err)
 
 		ownerBalance = h.balanceOf(t, owner, owner.AddressAsBytes())
@@ -52,13 +52,13 @@ func TestERC721_safeTransferFrom(t *testing.T) {
 		tokenOwner := h.ownerOf(t, owner, tokenId)
 		require.EqualValues(t, owner.AddressAsBytes(), tokenOwner)
 
-		err := h.safeTransferFrom(t, owner, owner.AddressAsBytes(), receiverContractNameAsBytes, tokenId, []byte(r.contractName))
+		err := h.safeTransferFrom(t, owner, owner.AddressAsBytes(), receiverContractNameAsBytes, tokenId, r.contractName, []byte(r.contractName))
 		require.NoError(t, err)
 
 		require.EqualValues(t, receiverContractNameAsBytes, h.ownerOf(t, owner, tokenId))
 		require.EqualValues(t, receivedTokens + 1, r.receivedTokens(t, owner))
 
-		err = h.safeTransferFrom(t, owner, owner.AddressAsBytes(), receiverContractNameAsBytes, tokenId, []byte(r.contractName))
+		err = h.safeTransferFrom(t, owner, owner.AddressAsBytes(), receiverContractNameAsBytes, tokenId, r.contractName, []byte(r.contractName))
 		require.EqualError(t, err, "transfer not authorized")
 	})
 
@@ -74,7 +74,7 @@ func TestERC721_safeTransferFrom(t *testing.T) {
 		err := h.approve(t, owner, approvedForSingleSale.AddressAsBytes(), tokenId)
 		require.NoError(t, err)
 
-		err = h.safeTransferFrom(t, approvedForSingleSale, owner.AddressAsBytes(), receiverContractNameAsBytes, tokenId, []byte(r.contractName))
+		err = h.safeTransferFrom(t, approvedForSingleSale, owner.AddressAsBytes(), receiverContractNameAsBytes, tokenId, r.contractName, []byte(r.contractName))
 		require.NoError(t, err)
 
 		require.EqualValues(t, receiverContractNameAsBytes, h.ownerOf(t, owner, tokenId))
@@ -92,7 +92,7 @@ func TestERC721_safeTransferFrom(t *testing.T) {
 		err := h.setApprovalForAll(t, owner, approvedAll.AddressAsBytes(), 1)
 		require.NoError(t, err)
 
-		err = h.safeTransferFrom(t, approvedAll, owner.AddressAsBytes(), receiverContractNameAsBytes, tokenId, []byte(r.contractName))
+		err = h.safeTransferFrom(t, approvedAll, owner.AddressAsBytes(), receiverContractNameAsBytes, tokenId, r.contractName, []byte(r.contractName))
 		require.NoError(t, err)
 
 		require.EqualValues(t, receiverContractNameAsBytes, h.ownerOf(t, owner, tokenId))
@@ -109,7 +109,7 @@ func TestERC721_safeTransferFrom(t *testing.T) {
 		tokenOwner := h.ownerOf(t, owner, tokenId)
 		require.EqualValues(t, owner.AddressAsBytes(), tokenOwner)
 
-		err := h.safeTransferFrom(t, owner, owner.AddressAsBytes(), receiverContractNameAsBytes, tokenId, []byte(r.contractName))
+		err := h.safeTransferFrom(t, owner, owner.AddressAsBytes(), receiverContractNameAsBytes, tokenId, r.contractName, []byte(r.contractName))
 		require.EqualError(t, err, "invalid callback return value")
 
 		require.EqualValues(t, owner.AddressAsBytes(), h.ownerOf(t, owner, tokenId))

@@ -30,7 +30,7 @@
 
 `transferFrom(from []byte, to []byte, tokenId uint64)`
 
-`safeTransferFrom(from []byte, to []byte, tokenId uint64, data []byte)`
+`safeTransferFrom(from []byte, to []byte, tokenId uint64, toContractName string, data []byte)`
 
 `approve(approvedAddress []byte, tokenId uint64)`
 
