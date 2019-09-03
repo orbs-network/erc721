@@ -13,9 +13,6 @@ func transferFrom(from []byte, to []byte, tokenId uint64) {
 }
 
 func safeTransferFrom(from []byte, to []byte, tokenId uint64, data []byte) {
-	println("from", hex.EncodeToString(from))
-	println("to", hex.EncodeToString(to))
-
 	_checkTransferRights(from, to, tokenId)
 	_transfer(from, to, tokenId)
 	_callOnERC721Received(address.GetCallerAddress(), from, to, tokenId, data)
@@ -41,6 +38,8 @@ func _checkTransferRights(from []byte, to []byte, tokenId uint64) {
 	}
 }
 
+var MAGIC_ON_ERC721_RECEIVED, _ = hex.DecodeString("150b7a02")
+
 func _callOnERC721Received(operator []byte, from []byte, to []byte, tokenId uint64, data []byte) {
 	contractName := string(data)
 	if !bytes.Equal(to, address.GetContractAddress(contractName)) {
@@ -48,8 +47,7 @@ func _callOnERC721Received(operator []byte, from []byte, to []byte, tokenId uint
 	}
 
 	value := service.CallMethod(contractName, "onERC721Received", operator, from, tokenId, data)[0].([]byte)
-	// FIXME temporary solution
-	if !bytes.Equal(value, []byte{1, 2, 3, 4}) {
+	if !bytes.Equal(value, MAGIC_ON_ERC721_RECEIVED) {
 		panic("invalid callback return value")
 	}
 }

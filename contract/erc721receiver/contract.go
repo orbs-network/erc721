@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/hex"
 	"github.com/orbs-network/orbs-contract-sdk/go/sdk/v1"
 	"github.com/orbs-network/orbs-contract-sdk/go/sdk/v1/state"
 )
@@ -15,10 +16,12 @@ func _init() {
 var CALLBACK_COUNTER = []byte("callback_counter")
 var ACCEPT = []byte("accept_tokens")
 
+var MAGIC_ON_ERC721_RECEIVED, _ = hex.DecodeString("150b7a02")
+
 func onERC721Received(operator []byte, from []byte, tokenId uint64, data []byte) []byte {
 	if _shouldAcceptTokens() {
 		_incCallbackCounter()
-		return []byte{1, 2, 3, 4}
+		return MAGIC_ON_ERC721_RECEIVED
 	}
 
 	return nil
