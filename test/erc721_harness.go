@@ -11,23 +11,23 @@ import (
 	"time"
 )
 
-type harness struct {
+type erc721Harness struct {
 	client       *orbs.OrbsClient
 	contractName string
 }
 
-func newHarness() *harness {
-	return &harness{
+func newERC721Harness() *erc721Harness {
+	return &erc721Harness{
 		client:       orbs.NewClient(test.GetGammaEndpoint(), 42, codec.NETWORK_TYPE_TEST_NET),
 		contractName: fmt.Sprintf("ERC721X%d", time.Now().UnixNano()),
 	}
 }
 
-func (h *harness) deployContract(t *testing.T, sender *orbs.OrbsAccount) {
-	fileNames, _ := ioutil.ReadDir("../contract")
+func (h *erc721Harness) deployContract(t *testing.T, sender *orbs.OrbsAccount) {
+	fileNames, _ := ioutil.ReadDir("../contract/erc721")
 	var contractSources [][]byte
 	for _, fileName := range fileNames {
-		source, _ := ioutil.ReadFile("../contract/" + fileName.Name())
+		source, _ := ioutil.ReadFile("../contract/erc721/" + fileName.Name())
 		contractSources = append(contractSources, source)
 	}
 
@@ -41,7 +41,7 @@ func (h *harness) deployContract(t *testing.T, sender *orbs.OrbsAccount) {
 	require.EqualValues(t, codec.EXECUTION_RESULT_SUCCESS, deployResponse.ExecutionResult)
 }
 
-func (h *harness) balanceOf(t *testing.T, sender *orbs.OrbsAccount, address []byte) uint64 {
+func (h *erc721Harness) balanceOf(t *testing.T, sender *orbs.OrbsAccount, address []byte) uint64 {
 	query, err := h.client.CreateQuery(sender.PublicKey, h.contractName, "balanceOf", address)
 	require.NoError(t, err)
 
@@ -51,7 +51,7 @@ func (h *harness) balanceOf(t *testing.T, sender *orbs.OrbsAccount, address []by
 	return queryResponse.OutputArguments[0].(uint64)
 }
 
-func (h *harness) ownerOf(t *testing.T, sender *orbs.OrbsAccount, tokenId uint64) []byte {
+func (h *erc721Harness) ownerOf(t *testing.T, sender *orbs.OrbsAccount, tokenId uint64) []byte {
 	query, err := h.client.CreateQuery(sender.PublicKey, h.contractName, "ownerOf", tokenId)
 	require.NoError(t, err)
 
@@ -61,7 +61,7 @@ func (h *harness) ownerOf(t *testing.T, sender *orbs.OrbsAccount, tokenId uint64
 	return queryResponse.OutputArguments[0].([]byte)
 }
 
-func (h *harness) tokenMetadata(t *testing.T, sender *orbs.OrbsAccount, tokenId uint64) string {
+func (h *erc721Harness) tokenMetadata(t *testing.T, sender *orbs.OrbsAccount, tokenId uint64) string {
 	query, err := h.client.CreateQuery(sender.PublicKey, h.contractName, "tokenMetadata", tokenId)
 	require.NoError(t, err)
 
@@ -71,7 +71,7 @@ func (h *harness) tokenMetadata(t *testing.T, sender *orbs.OrbsAccount, tokenId 
 	return queryResponse.OutputArguments[0].(string)
 }
 
-func (h *harness) getApproved(t *testing.T, sender *orbs.OrbsAccount, tokenId uint64) []byte {
+func (h *erc721Harness) getApproved(t *testing.T, sender *orbs.OrbsAccount, tokenId uint64) []byte {
 	query, err := h.client.CreateQuery(sender.PublicKey, h.contractName, "getApproved", tokenId)
 	require.NoError(t, err)
 
@@ -81,7 +81,7 @@ func (h *harness) getApproved(t *testing.T, sender *orbs.OrbsAccount, tokenId ui
 	return queryResponse.OutputArguments[0].([]byte)
 }
 
-func (h *harness) isApprovedForAll(t *testing.T, sender *orbs.OrbsAccount, address []byte, operator []byte) uint32 {
+func (h *erc721Harness) isApprovedForAll(t *testing.T, sender *orbs.OrbsAccount, address []byte, operator []byte) uint32 {
 	query, err := h.client.CreateQuery(sender.PublicKey, h.contractName, "isApprovedForAll", address, operator)
 	require.NoError(t, err)
 
@@ -91,7 +91,7 @@ func (h *harness) isApprovedForAll(t *testing.T, sender *orbs.OrbsAccount, addre
 	return queryResponse.OutputArguments[0].(uint32)
 }
 
-func (h *harness) mint(t *testing.T, sender *orbs.OrbsAccount, jsonMetadata string) uint64 {
+func (h *erc721Harness) mint(t *testing.T, sender *orbs.OrbsAccount, jsonMetadata string) uint64 {
 	tx, _, err := h.client.CreateTransaction(sender.PublicKey, sender.PrivateKey, h.contractName, "mint", jsonMetadata)
 	require.NoError(t, err)
 
@@ -101,7 +101,7 @@ func (h *harness) mint(t *testing.T, sender *orbs.OrbsAccount, jsonMetadata stri
 	return response.OutputArguments[0].(uint64)
 }
 
-func (h *harness) transferFrom(t *testing.T, sender *orbs.OrbsAccount, from []byte, to []byte, tokenId uint64) error {
+func (h *erc721Harness) transferFrom(t *testing.T, sender *orbs.OrbsAccount, from []byte, to []byte, tokenId uint64) error {
 	tx, _, err := h.client.CreateTransaction(sender.PublicKey, sender.PrivateKey, h.contractName, "transferFrom", from, to, tokenId)
 	require.NoError(t, err)
 
@@ -115,7 +115,21 @@ func (h *harness) transferFrom(t *testing.T, sender *orbs.OrbsAccount, from []by
 	return nil
 }
 
-func (h *harness) approve(t *testing.T, sender *orbs.OrbsAccount, address []byte, tokenId uint64) error {
+func (h *erc721Harness) safeTransferFrom(t *testing.T, sender *orbs.OrbsAccount, from []byte, to []byte, tokenId uint64) error {
+	tx, _, err := h.client.CreateTransaction(sender.PublicKey, sender.PrivateKey, h.contractName, "safeTransferFrom", from, to, tokenId)
+	require.NoError(t, err)
+
+	response, err := h.client.SendTransaction(tx)
+	require.NoError(t, err)
+
+	if response.ExecutionResult != codec.EXECUTION_RESULT_SUCCESS {
+		return fmt.Errorf(response.OutputArguments[0].(string))
+	}
+
+	return nil
+}
+
+func (h *erc721Harness) approve(t *testing.T, sender *orbs.OrbsAccount, address []byte, tokenId uint64) error {
 	tx, _, err := h.client.CreateTransaction(sender.PublicKey, sender.PrivateKey, h.contractName, "approve", address, tokenId)
 	require.NoError(t, err)
 
@@ -129,7 +143,7 @@ func (h *harness) approve(t *testing.T, sender *orbs.OrbsAccount, address []byte
 	return nil
 }
 
-func (h *harness) setApprovalForAll(t *testing.T, sender *orbs.OrbsAccount, operator []byte, approved uint32) error {
+func (h *erc721Harness) setApprovalForAll(t *testing.T, sender *orbs.OrbsAccount, operator []byte, approved uint32) error {
 	tx, _, err := h.client.CreateTransaction(sender.PublicKey, sender.PrivateKey, h.contractName, "setApprovalForAll", operator, approved)
 	require.NoError(t, err)
 
@@ -143,7 +157,7 @@ func (h *harness) setApprovalForAll(t *testing.T, sender *orbs.OrbsAccount, oper
 	return nil
 }
 
-func paintBlackSquare(t *testing.T, h *harness, owner *orbs.OrbsAccount) uint64 {
+func paintBlackSquare(t *testing.T, h *erc721Harness, owner *orbs.OrbsAccount) uint64 {
 	balance := h.balanceOf(t, owner, owner.AddressAsBytes())
 	tokenId := h.mint(t, owner, `{"title":"Black Square","type":"Painting"}`)
 
