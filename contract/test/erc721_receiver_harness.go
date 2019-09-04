@@ -2,13 +2,14 @@ package test
 
 import (
 	"fmt"
+	"io/ioutil"
+	"testing"
+	"time"
+
 	"github.com/orbs-network/orbs-client-sdk-go/codec"
 	"github.com/orbs-network/orbs-client-sdk-go/orbs"
 	"github.com/orbs-network/orbs-contract-sdk/go/examples/test"
 	"github.com/stretchr/testify/require"
-	"io/ioutil"
-	"testing"
-	"time"
 )
 
 type erc721ReceiverHarness struct {
@@ -24,7 +25,7 @@ func newErc721ReceiverHarness() *erc721ReceiverHarness {
 }
 
 func (h *erc721ReceiverHarness) deployContract(t *testing.T, sender *orbs.OrbsAccount) {
-	source, _ := ioutil.ReadFile("../contract/erc721receiver/contract.go")
+	source, _ := ioutil.ReadFile("../erc721receiver/contract.go")
 
 	deployTx, _, err := h.client.CreateDeployTransaction(sender.PublicKey, sender.PrivateKey,
 		h.contractName, orbs.PROCESSOR_TYPE_NATIVE, source)

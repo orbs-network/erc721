@@ -2,13 +2,14 @@ package test
 
 import (
 	"fmt"
+	"io/ioutil"
+	"testing"
+	"time"
+
 	"github.com/orbs-network/orbs-client-sdk-go/codec"
 	"github.com/orbs-network/orbs-client-sdk-go/orbs"
 	"github.com/orbs-network/orbs-contract-sdk/go/examples/test"
 	"github.com/stretchr/testify/require"
-	"io/ioutil"
-	"testing"
-	"time"
 )
 
 type erc721Harness struct {
@@ -24,10 +25,10 @@ func newERC721Harness() *erc721Harness {
 }
 
 func (h *erc721Harness) deployContract(t *testing.T, sender *orbs.OrbsAccount) {
-	fileNames, _ := ioutil.ReadDir("../contract/erc721")
+	fileNames, _ := ioutil.ReadDir("../erc721")
 	var contractSources [][]byte
 	for _, fileName := range fileNames {
-		source, _ := ioutil.ReadFile("../contract/erc721/" + fileName.Name())
+		source, _ := ioutil.ReadFile("../erc721/" + fileName.Name())
 		contractSources = append(contractSources, source)
 	}
 

@@ -53,5 +53,9 @@ gamma-cli start -env experimental
 ```
 
 ```
-go test ./test/... -v
+go test ./contract/test/... -v
+```
+
+```
+npm test
 ```

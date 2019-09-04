@@ -10,7 +10,7 @@
         "gamma:start": "gamma-cli start-local -wait",
         "gamma:stop": "gamma-cli stop-local",
         "erc721:local": "node ./src/deploy.js",
-        "test": "mocha e2e --timeout 20000 --exit"
+        "test": "mocha test --timeout 20000 --exit"
     },
     "devDependencies": {
         "expect.js": "^0.3.1",
