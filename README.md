@@ -43,3 +43,15 @@
 ### ERC721 Receiver
 
 `onERC721Received(operator []byte, from []byte, tokenId uint64, data []byte) []byte`
+
+## Testing
+
+Some tests are a bit flaky due to a delay between transaction commit and state storage update, so you may need to run them multiple times.
+
+```
+gamma-cli start -env experimental
+```
+
+```
+go test ./test/... -v
+```
