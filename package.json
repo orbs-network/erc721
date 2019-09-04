@@ -1,0 +1,22 @@
+{
+    "name": "erc721",
+    "version": "1.0.0",
+    "main": "index.js",
+    "author": {
+        "name": "Kirill Maksimov",
+        "email": "kirill@orbs.com"
+    },
+    "scripts": {
+        "gamma:start": "gamma-cli start-local -wait",
+        "gamma:stop": "gamma-cli stop-local",
+        "erc721:local": "node ./src/deploy.js",
+        "test": "mocha e2e --timeout 20000 --exit"
+    },
+    "devDependencies": {
+        "expect.js": "^0.3.1",
+        "mocha": "^6.1.4"
+    },
+    "dependencies": {
+        "orbs-client-sdk": "^1.3.1"
+    }
+}
