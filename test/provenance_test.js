@@ -35,8 +35,12 @@ describe.only("ERC721 with provenance", () => {
 		const buyer = createAccount();
 		await sellerERC721.transferFrom(seller.address, buyer.address, tokenId);
         expect(await sellerERC721.ownerOf(tokenId)).to.eql(buyer.address);
-        
-        expect(await ownerProvenance.provenance(tokenId)).to.eql([]);
+
+        const provenance = await ownerProvenance.provenance(tokenId);
+        expect(provenance[0].From).to.eql(seller.address.toLowerCase());
+        expect(provenance[0].To).to.eql(buyer.address.toLowerCase());
+        expect(provenance[0].TokenId).to.eql(0n);
+        expect(provenance[0].Timestamp).to.be.a("string");
 	});
 
 });
