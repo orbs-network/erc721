@@ -9,7 +9,7 @@ const blackSquare = {
 };
 
 describe("ERC721", () => {
-    it("updates contract state", async () => {
+    it("transfer flow", async () => {
 		const contractOwner = createAccount();
 		const contractName = "ERC721" + new Date().getTime();
 
@@ -21,7 +21,10 @@ describe("ERC721", () => {
 		const tokenId = await sellerERC721.mint(blackSquare);
 		expect(tokenId).to.eql(0n);
 
-		// const buyer = createAccount();
-		// const buyerERC721 = new ERC721(getClient(), contractName, seller.buyerKey, seller.buyerKey);
+		expect(await sellerERC721.tokenMetadata(tokenId)).to.eql(blackSquare);
+
+		const buyer = createAccount();
+		await sellerERC721.transfer(seller.address, buyer.address, tokenId);
+		expect(await sellerERC721.ownerOf(tokenId)).to.eql(buyer.address);
 	});
 });
