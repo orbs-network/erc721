@@ -48,7 +48,17 @@
 
 **TODO** minting contract
 
-**TODO** callback contract
+`setCallbackContract(name string)`
+
+## Flow
+
+### Regular flow
+
+**TODO**
+
+### Extended flow
+
+**TODO**
 
 ## Testing
 

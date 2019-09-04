@@ -9,7 +9,7 @@ const blackSquare = {
 	type: "Painting"
 };
 
-describe.only("ERC721 with provenance", () => {
+describe("ERC721 with provenance", () => {
     it("transferFrom", async () => {
 		const contractOwner = createAccount();
         const erc721ContractName = "ERC721" + new Date().getTime();
