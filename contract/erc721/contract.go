@@ -10,7 +10,9 @@ var PUBLIC = sdk.Export(
 	balanceOf, ownerOf,
 	transferFrom, safeTransferFrom,
 	approve, getApproved,
-	setApprovalForAll, isApprovedForAll)
+	setApprovalForAll, isApprovedForAll,
+	setCallbackContract,
+)
 
 var SYSTEM = sdk.Export(_init)
 
@@ -20,6 +22,6 @@ func _init() {
 	_setNextTokenID(0)
 }
 
-func Transfer(from []byte, to []byte, tokenId uint64) {}
-func Approval(owner []byte, address []byte, tokenId uint64) {}
+func Transfer(from []byte, to []byte, tokenId uint64)                  {}
+func Approval(owner []byte, address []byte, tokenId uint64)            {}
 func ApprovalForAll(owner []byte, operator []byte, permissions uint32) {}

@@ -12,14 +12,28 @@ function getClient() {
     return new Client(endpoint, chain, NetworkType.NETWORK_TYPE_TEST_NET);
 }
 
-function getContractCode() {
+function getERC721ContractCode() {
 	const dir = __dirname + "/../contract/erc721";
 	return readdirSync(dir).map(f => readFileSync(join(dir, f)));
 }
 
-async function deploy(client, contractOwner, contractName) {
+function getProvenanceContractCode() {
+	const dir = __dirname + "/../contract/provenance";
+	return readdirSync(dir).map(f => readFileSync(join(dir, f)));
+}
+
+async function deployERC721(client, contractOwner, contractName) {
     const [tx, txid] = client.createDeployTransaction(contractOwner.publicKey, contractOwner.privateKey,
-		contractName, PROCESSOR_TYPE_NATIVE, ...getContractCode());
+		contractName, PROCESSOR_TYPE_NATIVE, ...getERC721ContractCode());
+    const receipt = await client.sendTransaction(tx);
+	if (receipt.executionResult !== 'SUCCESS') {
+		throw new Error(receipt.outputArguments[0].value);
+	}
+}
+
+async function deployProvenance(client, contractOwner, contractName) {
+    const [tx, txid] = client.createDeployTransaction(contractOwner.publicKey, contractOwner.privateKey,
+		contractName, PROCESSOR_TYPE_NATIVE, ...getProvenanceContractCode());
     const receipt = await client.sendTransaction(tx);
 	if (receipt.executionResult !== 'SUCCESS') {
 		throw new Error(receipt.outputArguments[0].value);
@@ -27,15 +41,16 @@ async function deploy(client, contractOwner, contractName) {
 }
 
 module.exports = {
-	getContractCode,
+	getERC721ContractCode,
 	getClient,
-	deploy
+	deployERC721,
+	deployProvenance
 }
 
 if (!module.parent) {
 	(async () => {
 		try {
-			await deploy(getClient(), createAccount(), "ERC721")
+			await deployERC721(getClient(), createAccount(), "ERC721")
 			console.log("Deployed ERC721 smart contract successfully");
 		} catch (e) {
 			console.error(e);

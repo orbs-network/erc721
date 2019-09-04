@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/hex"
+
 	"github.com/orbs-network/orbs-contract-sdk/go/sdk/v1/address"
 	"github.com/orbs-network/orbs-contract-sdk/go/sdk/v1/events"
 	"github.com/orbs-network/orbs-contract-sdk/go/sdk/v1/service"
@@ -11,12 +12,14 @@ import (
 func transferFrom(from []byte, to []byte, tokenId uint64) {
 	_checkTransferRights(from, to, tokenId)
 	_transfer(from, to, tokenId)
+	_executeCallback(from, to, tokenId, []byte{})
 }
 
 func safeTransferFrom(from []byte, to []byte, tokenId uint64, toContractName string, data []byte) {
 	_checkTransferRights(from, to, tokenId)
 	_transfer(from, to, tokenId)
 	_callOnERC721Received(address.GetCallerAddress(), from, to, tokenId, toContractName, data)
+	_executeCallback(from, to, tokenId, data)
 }
 
 func _transfer(from []byte, to []byte, tokenId uint64) {

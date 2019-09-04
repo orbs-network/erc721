@@ -44,6 +44,12 @@
 
 `onERC721Received(operator []byte, from []byte, tokenId uint64, data []byte) []byte`
 
+### Extensions
+
+**TODO** minting contract
+
+**TODO** callback contract
+
 ## Testing
 
 Some tests are a bit flaky due to a delay between transaction commit and state storage update, so you may need to run them multiple times.

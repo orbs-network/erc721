@@ -1,7 +1,7 @@
 const expect = require("expect.js");
 const { createAccount } = require("orbs-client-sdk");
 const { ERC721 } = require("../src/erc721");
-const { deploy, getClient } = require("../src/deploy");
+const { deployERC721, getClient } = require("../src/deploy");
 
 const blackSquare = {
 	title: "Black Square",
@@ -13,7 +13,7 @@ describe("ERC721", () => {
 		const contractOwner = createAccount();
 		const contractName = "ERC721" + new Date().getTime();
 
-		await deploy(getClient(), contractOwner, contractName);
+		await deployERC721(getClient(), contractOwner, contractName);
 
 		const seller = createAccount();
 		const sellerERC721 = new ERC721(getClient(), contractName, seller.publicKey, seller.privateKey);
@@ -35,7 +35,7 @@ describe("ERC721", () => {
 		const contractOwner = createAccount();
 		const contractName = "ERC721" + new Date().getTime();
 
-		await deploy(getClient(), contractOwner, contractName);
+		await deployERC721(getClient(), contractOwner, contractName);
 
 		const seller = createAccount();
 		const sellerERC721 = new ERC721(getClient(), contractName, seller.publicKey, seller.privateKey);
@@ -56,7 +56,7 @@ describe("ERC721", () => {
 		const contractOwner = createAccount();
 		const contractName = "ERC721" + new Date().getTime();
 
-		await deploy(getClient(), contractOwner, contractName);
+		await deployERC721(getClient(), contractOwner, contractName);
 
 		const seller = createAccount();
 		const sellerERC721 = new ERC721(getClient(), contractName, seller.publicKey, seller.privateKey);

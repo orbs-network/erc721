@@ -205,6 +205,21 @@ class ERC721 {
 
 		return receipt.outputArguments[0].value > 0;
 	}
+
+	async setCallbackContract(contractName) {
+		const [ tx, txId ] = this.client.createTransaction(
+			this.publicKey, this.privateKey, this.contractName,
+			"setCallbackContract",
+			[
+				argString(contractName),
+			]
+		);
+
+		const receipt = await this.client.sendTransaction(tx);
+		if (receipt.executionResult !== 'SUCCESS') {
+			throw getErrorFromReceipt(receipt);
+		}
+	}
 }
 
 module.exports = {
