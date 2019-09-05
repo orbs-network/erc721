@@ -2,6 +2,7 @@
     "name": "orbs-erc721",
     "version": "1.0.0",
     "main": "index.js",
+    "browser": "index-web.js",
     "author": {
         "name": "Kirill Maksimov",
         "email": "kirill@orbs.com"
