@@ -42,6 +42,7 @@ async function deployProvenance(client, contractOwner, contractName) {
 
 module.exports = {
 	getERC721ContractCode,
+	getProvenanceContractCode,
 	getClient,
 	deployERC721,
 	deployProvenance
@@ -50,7 +51,7 @@ module.exports = {
 if (!module.parent) {
 	(async () => {
 		try {
-			await deployERC721(getClient(), createAccount(), "ERC721")
+			await deployERC721(getClient(), createAccount(), "ERC721");
 			console.log("Deployed ERC721 smart contract successfully");
 		} catch (e) {
 			console.error(e);
