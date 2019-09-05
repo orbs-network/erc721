@@ -18,9 +18,9 @@ func mint(jsonMetadata string) uint64 {
 	return tokenId
 }
 
-
 func _mint(address []byte, tokenId uint64) {
 	_transfer(nil, address, tokenId)
+	_executeCallback(nil, address, tokenId, nil)
 }
 
 func _setNextTokenID(nextTokenId uint64) {
@@ -30,4 +30,3 @@ func _setNextTokenID(nextTokenId uint64) {
 func _getNextTokenID() uint64 {
 	return state.ReadUint64(NEXT_TOKEN_ID)
 }
-
