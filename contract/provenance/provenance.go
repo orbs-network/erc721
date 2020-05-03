@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/hex"
 	"encoding/json"
-	"github.com/orbs-network/contract-external-libraries-go/v1/list"
 	"github.com/orbs-network/orbs-contract-sdk/go/sdk/v1/env"
 	"strconv"
 	"time"
@@ -30,7 +29,10 @@ func provenance(tokenId uint64) string {
 	var transfers []TransferExport
 
 	for i := _tokenList(tokenId).Iterator(); i.Next(); {
-		t := i.Value().(*Transfer)
+		rawJSON := i.Value().([]byte)
+		t := Transfer{}
+		json.Unmarshal(rawJSON, &t)
+
 		transfers = append(transfers, TransferExport{
 			From: _encodeAddress(t.From),
 			To: _encodeAddress(t.To),
@@ -44,16 +46,18 @@ func provenance(tokenId uint64) string {
 }
 
 func _appendTransferEvent(from []byte, to []byte, tokenId uint64, data []byte) {
-	_tokenList(tokenId).Append(Transfer{
+	rawJSON, _ := json.Marshal(Transfer{
 		From: from,
 		To: to,
 		TokenId: tokenId,
 		Timestamp: env.GetBlockTimestamp(),
 	})
+
+	_tokenList(tokenId).Append(rawJSON)
 }
 
-func _tokenList(tokenId uint64) list.List {
-	return list.NewAppendOnlyList("provenance."+strconv.FormatUint(tokenId, 10), list.StructSerializer, list.StructDeserializer(Transfer{}))
+func _tokenList(tokenId uint64) List {
+	return NewAppendOnlyList("provenance."+strconv.FormatUint(tokenId, 10), BytesSerializer, BytesDeserializer)
 }
 
 func _encodeAddress(address []byte) string {

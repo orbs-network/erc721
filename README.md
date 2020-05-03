@@ -65,7 +65,7 @@
 Some tests are a bit flaky due to a delay between transaction commit and state storage update, so you may need to run them multiple times.
 
 ```
-gamma-cli start -env experimental
+gamma-cli start -wait
 ```
 
 ```
